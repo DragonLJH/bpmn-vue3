@@ -18,11 +18,11 @@
             <div class="custom-input-item">
                 <div>办理规则</div>
                 <div>
-                    <el-radio-group v-model="handle" @change="(value) => updateAttr('handle', value)">
-                        <el-radio-button label="handle1" size="large" border>单人办理</el-radio-button>
-                        <el-radio-button label="handle2" size="large" border>多人并行</el-radio-button>
-                        <el-radio-button label="handle3" size="large" border>多人顺序</el-radio-button>
-                        <el-radio-button label="handle4" size="large" border>多人任意</el-radio-button>
+                    <el-radio-group v-model="handle" @change="(value) => updateAttr('mode', value)">
+                        <el-radio-button label="rules-1" size="large" border>单人办理</el-radio-button>
+                        <el-radio-button label="rules-2" size="large" border>多人并行</el-radio-button>
+                        <el-radio-button label="rules-3" size="large" border>多人顺序</el-radio-button>
+                        <el-radio-button label="rules-4" size="large" border>多人任意</el-radio-button>
                     </el-radio-group>
                 </div>
             </div>
@@ -65,16 +65,16 @@ onMounted(() => {
     }
     if (element.type == "bpmn:UserTask") {
         userNode.value = true
-        handle.value = element?.businessObject.$attrs['handle']
+        handle.value = element?.businessObject.$attrs['mode']
         api.GetApi("/user/queryAllUser").then(({ result }) => {
             reviewers.value = result
-            reviewer.value = element?.businessObject.$attrs['reviewer']
+            reviewer.value = element?.businessObject.$attrs['people']
         })
     }
 })
 
 const disabledreviewers = (data) => {
-    if (handle.value === "handle1") {
+    if (handle.value === "rules-1") {
         if (data.length) {
             reviewers.value = [...reviewers.value].map(item => {
                 return data.includes(item.userId) ? item : { disabled: true, ...item }
@@ -103,13 +103,13 @@ const updateAttr = (key, value) => {
     modeling.updateProperties(element, { ...o });
 }
 const handleClose = () => {
-    if (!element?.businessObject.$attrs['reviewer'].length) reviewer.value = []
+    if (!element?.businessObject.$attrs['people'].length) reviewer.value = []
     dialogVisible.value = false
 }
 
 const confirm = () => {
     dialogVisible.value = false
-    updateAttr('reviewer', reviewer.value)
+    updateAttr('people', reviewer.value)
 }
 
 const leftCheckChange = (value, movedKeys) => {
